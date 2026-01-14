@@ -1,0 +1,23 @@
+# Environment
+.venv/
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Allow PDF dataset
+data/docs/*.pdf
+
+# Block generated KB
+data/kb/*
+data/kb_lc/*
+
+# Keep folder placeholders
+!data/kb/.gitkeep
+!data/kb_lc/.gitkeep
+
+# OS
+.streamlit/
+.DS_Store
+Thumbs.db
