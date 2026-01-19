@@ -5,6 +5,11 @@ The system allows users to ask natural-language questions over a curated collect
 
 The chatbot is designed to be trustworthy and document grounded it answers only from the provided documents and explicitly states when an answer cannot be found.
 
+## Metadata Filter & Memory
+
+- **Metadata Filter:** You can select specific PDFs in the sidebar, and the chatbot will retrieve answers only from those documents.  
+- **Conversational Memory:** The chatbot supports simple follow-up questions by using your previous query to understand short or ambiguous questions.
+
 ## Project Objectives
 
 The goal of this project is to demonstrate an end-to-end RAG pipeline that:
@@ -79,10 +84,9 @@ Create a .env file in the project root:
 OPENAI_API_KEY=your_api_key_here
 
 ### How to run
-
-1. python -m rag.build_kb
-2. streamlit run app/streamlit_app.py
-
+1. cd Leart_Jahiri_RAG-Chatbot-main
+2. python -m rag.build_kb
+3. streamlit run app/streamlit_app.py
 
 
 
