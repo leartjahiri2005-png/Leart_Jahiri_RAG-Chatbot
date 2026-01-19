@@ -1,6 +1,9 @@
 from pathlib import Path
 from dotenv import load_dotenv
 from langchain_community.document_loaders import PyPDFLoader
+import logging
+
+logging.getLogger("pypdf").setLevel(logging.ERROR)
 
 DOCS_DIR = Path("data/docs")
 
@@ -17,6 +20,7 @@ def ingest():
             docs.extend(loader.load()) 
         except Exception as e:
             print(f"[SKIP] {pdf.name}: {e}")
+
 
     print(f"Loaded {len(docs)} Pages from PDFs.")
     return docs
