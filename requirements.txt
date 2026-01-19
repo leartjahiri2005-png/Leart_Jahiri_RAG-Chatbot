@@ -16,3 +16,5 @@ python-dotenv
 faiss-cpu
 pytest
 tiktoken
+cryptography
+
