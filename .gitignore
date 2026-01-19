@@ -6,10 +6,10 @@
 __pycache__/
 *.pyc
 
-# Allow PDF dataset
-data/docs/*.pdf
+# DO NOT ignore PDFs
+# (dataset must be public)
 
-# Block generated KB
+# Block generated vector DB
 data/kb/*
 data/kb_lc/*
 
