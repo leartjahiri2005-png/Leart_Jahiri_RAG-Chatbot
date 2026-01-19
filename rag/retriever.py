@@ -4,16 +4,17 @@ from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import FAISS
 
 KB_DIR = Path("data/kb_lc")
-DISTANCE_THRESHOLD = 1.2 
+DISTANCE_THRESHOLD = 1.2  
 
 def load_vectorstore() -> FAISS:
-    """Load FAISS index nga data/kb_lc."""
+    """Load FAISS index from data/kb_lc."""
     load_dotenv()
     return FAISS.load_local(
         str(KB_DIR),
         OpenAIEmbeddings(model="text-embedding-3-small"),
         allow_dangerous_deserialization=True,
     )
+
 
 def retrieve(question: str, k: int = 5, use_mmr: bool = True, source_filter=None):
     """
@@ -24,7 +25,11 @@ def retrieve(question: str, k: int = 5, use_mmr: bool = True, source_filter=None
     """
     vs = load_vectorstore()
 
-    fetch_k = max(20, k * 6) if source_filter else max(10, k * 3)
+    if source_filter:
+        use_mmr = False
+
+    fetch_k = max(10, k * 3)
+
     docs_scores = vs.similarity_search_with_score(question, k=fetch_k)
     if not docs_scores:
         return [], [], ""
@@ -36,20 +41,21 @@ def retrieve(question: str, k: int = 5, use_mmr: bool = True, source_filter=None
             for (d, s) in docs_scores
             if Path(d.metadata.get("source", "unknown")).name in allowed
         ]
-
-    if not docs_scores:
-        return [], [], ""
+        if not docs_scores:
+            return [], [], ""
 
     best_distance = min(s for _, s in docs_scores)
-
     if best_distance > DISTANCE_THRESHOLD:
         return [], [], ""
-
 
     if use_mmr:
         retriever = vs.as_retriever(
             search_type="mmr",
-            search_kwargs={"k": fetch_k, "fetch_k": max(50, fetch_k), "lambda_mult": 0.5},
+            search_kwargs={
+                "k": k,
+                "fetch_k": max(50, fetch_k),
+                "lambda_mult": 0.5
+            },
         )
         docs = (
             retriever.get_relevant_documents(question)
@@ -57,16 +63,8 @@ def retrieve(question: str, k: int = 5, use_mmr: bool = True, source_filter=None
             else retriever.invoke(question)
         )
     else:
-        docs = vs.similarity_search(question, k=fetch_k)
+        docs = [d for (d, _) in docs_scores][:k]
 
-    if source_filter:
-        allowed = set(source_filter)
-        docs = [
-            d for d in docs
-            if Path(d.metadata.get("source", "unknown")).name in allowed
-        ]
-
-    docs = docs[:k]
     if not docs:
         return [], [], ""
 
@@ -84,5 +82,5 @@ def retrieve(question: str, k: int = 5, use_mmr: bool = True, source_filter=None
         chunk_id = d.metadata.get("chunk_id", "?")
         sources.append(f"{src} - page {page_str} - chunk#{chunk_id}")
 
-    sources = list(dict.fromkeys(sources)) 
+    sources = list(dict.fromkeys(sources))
     return docs, sources, context
