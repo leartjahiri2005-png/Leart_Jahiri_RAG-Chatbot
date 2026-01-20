@@ -10,6 +10,12 @@ The chatbot is designed to be trustworthy and document grounded it answers only 
 - **Metadata Filter:** You can select specific PDFs in the sidebar, and the chatbot will retrieve answers only from those documents.  
 - **Conversational Memory:** The chatbot supports simple follow-up questions by using your previous query to understand short or ambiguous questions.
 
+
+## Live Deployment (Streamlit Cloud)
+
+**Deployed App:**  
+https://leartjahirirag-chatbot-22cidb8en42s93ykpvntcr.streamlit.app/
+
 ## Project Objectives
 
 The goal of this project is to demonstrate an end-to-end RAG pipeline that:
@@ -69,10 +75,15 @@ data/docs/
      I cannot find this in the provided documents.
      ```
 
-## Installation & Setup
+## Installation &Local Setup
+
+### Navigate to the project folder
+
+cd Leart_Jahiri_RAG-Chatbot-main
 
 ### Create and activate virtual environment
 python -m venv .venv
+
 .venv\Scripts\activate
 
 ### Install dependencies
@@ -81,12 +92,12 @@ pip install -r requirements.txt
 
 ### Configure environment variables
 Create a .env file in the project root:
+
 OPENAI_API_KEY=your_api_key_here
 
 ### How to run
-1. cd Leart_Jahiri_RAG-Chatbot-main
-2. python -m rag.build_kb
-3. streamlit run app/streamlit_app.py
+1. python -m rag.build_kb
+2. streamlit run app/streamlit_app.py
 
 
 
