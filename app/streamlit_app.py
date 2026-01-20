@@ -8,6 +8,15 @@ sys.path.insert(0, str(ROOT))
 import streamlit as st
 from rag.qa import run
 
+faiss_path = Path("data/kb_lc/index.faiss")
+pkl_path = Path("data/kb_lc/index.pkl")
+
+if not (faiss_path.exists() and pkl_path.exists()):
+    st.info("Building knowledge base (FAISS index)... Please wait.")
+    from rag.build_kb import main as build_main
+    build_main()
+    st.success("Knowledge base built successfully!")
+
 NOT_FOUND = "I cannot find this in the provided documents."
 
 st.set_page_config(page_title="RAG Chatbot", page_icon="📄", layout="wide")
@@ -94,7 +103,7 @@ if prompt:
                 prompt,
                 k=k,
                 source_filter=selected_pdfs,
-                history_text=history_text,   
+                history_text=history_text,
             )
 
         answer = (answer or "").strip()
@@ -102,7 +111,9 @@ if prompt:
         if answer == NOT_FOUND:
             st.info(NOT_FOUND)
             if selected_pdfs:
-                st.warning("No relevant text found in the selected PDF(s). Try removing the filter or selecting more PDFs.")
+                st.warning(
+                    "No relevant text found in the selected PDF(s). Try removing the filter or selecting more PDFs."
+                )
         else:
             st.markdown(answer)
 
